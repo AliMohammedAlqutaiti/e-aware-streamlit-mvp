@@ -1,0 +1,34 @@
+name: E-AWARE Daily Fisher Brief
+
+on:
+  schedule:
+    # 09:00 UTC = 04:00 Peru time
+    - cron: "0 9 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  send-daily-brief:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Generate and send Fisher Brief
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: |
+          python messaging.py
